@@ -2,9 +2,9 @@
   "name": "dxv-services-bot",
   "version": "1.0.0",
   "description": "DXV'S SERVICES|V2| Discord bot",
-  "main": "core.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node core.js",
+    "start": "node index.js",
     "deploy": "node deploy-commands.js"
   },
   "dependencies": {

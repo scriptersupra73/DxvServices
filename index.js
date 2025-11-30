@@ -1,22 +1,16 @@
-const fs = require('fs');
-const path = require('path');
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
 require('dotenv').config();
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-// Load commands from ./commands
+// Create the commands collection manually
 client.commands = new Collection();
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
-for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file);
-  const command = require(filePath);
-  client.commands.set(command.data.name, command);
-}
+// Import your verify command directly
+const verify = require('./verify.js');
+client.commands.set(verify.data.name, verify);
 
-// Use clientReady instead of ready (v15 change)
+// v15 event name
 client.once('clientReady', () => {
   console.log(`✅ Bot is online! Logged in as ${client.user.tag}`);
 });
@@ -32,13 +26,8 @@ client.on('interactionCreate', async interaction => {
     await command.execute(interaction);
   } catch (error) {
     console.error(`❌ Error executing /${interaction.commandName}:`, error);
-
-    // Only reply if not already acknowledged
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({
-        content: '❌ Something went wrong!',
-        flags: 64, // ephemeral error message
-      });
+      await interaction.reply({ content: '❌ Something went wrong!', flags: 64 });
     }
   }
 });
